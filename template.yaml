@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    Ping Pong Lambda Functions
+
+    SAM Template
+
+Globals:
+    Function:
+        Timeout: 5
+
+Resources:
+    CreateBracketFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./src/create-bracket/create_bracket/
+            Handler: create_bracket.lambda_handler
+            Runtime: python3.7
+            Events:
+                CreateBracket:
+                    Type: Api
+                    Properties:
+                        Path: /api/bracket/create
+                        Method: post
+    CreateResultFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./src/create-result/create_result/
+            Handler: create_result.lambda_handler
+            Runtime: python3.7
+            Events:
+                CreateResult:
+                    Type: Api
+                    Properties:
+                        Path: /api/game/{gameId+}
+                        Method: put
+    GetBracketByIdFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./src/get-bracket-by-id/get_bracket_by_id/
+            Handler: get_bracket_by_id.lambda_handler
+            Runtime: python3.7
+            Events:
+                GetBracketById:
+                    Type: Api
+                    Properties:
+                        Path: /api/bracket/{bracketId+}
+                        Method: get
+    GetBracketsForUserFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./src/get-brackets-for-user/get_brackets_for_user/
+            Handler: get_brackets_for_user.lambda_handler
+            Runtime: python3.7
+            Events:
+                GetBracketsForUser:
+                    Type: Api
+                    Properties:
+                        Path: /api/user/{userId+}/brackets
+                        Method: get
+    GetCognitoUserByIdFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./src/get-cognito-user-by-id/get_cognito_user_by_id/
+            Handler: getCognitoUserById.lambdaHandler
+            Runtime: nodejs8.10
+            Events:
+                GetCognitoUserById:
+                    Type: Api
+                    Properties:
+                        Path: /api/user/{userId+}
+                        Method: get
+    GetCognitoUsersFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: ./src/get-cognito-users/get_cognito_users/
+            Handler: getCognitoUsers.lambdaHandler
+            Runtime: nodejs8.10
+            Events:
+                GetCognitoUsers:
+                    Type: Api
+                    Properties:
+                        Path: /api/user/list
+                        Method: get
+
+Outputs:
+    CreateBracketApi:
+      Description: "API Gateway endpoint URL for Prod stage for Create Bracket function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/bracket/create/"
+    CreateBracketFunction:
+      Description: "Create Bracket Lambda Function ARN"
+      Value: !GetAtt CreateBracketFunction.Arn
+    CreateBracketFunctionIamRole:
+      Description: "Implicit IAM Role created for Create Bracket function"
+      Value: !GetAtt CreateBracketFunctionRole.Arn
+    CreateResultApi:
+      Description: "API Gateway endpoint URL for Prod stage for Create Result function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/game/{gameId+}"
+    CreateResultFunction:
+      Description: "Create Result Lambda Function ARN"
+      Value: !GetAtt CreateResultFunction.Arn
+    CreateResultFunctionIamRole:
+      Description: "Implicit IAM Role created for Create Result function"
+      Value: !GetAtt CreateResultFunctionRole.Arn
+    GetBracketByIdApi:
+      Description: "API Gateway endpoint URL for Prod stage for Get Bracket By Id function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/api/bracket/{bracketId+}"
+    GetBracketByIdFunction:
+      Description: "Get Bracket By Id Lambda Function ARN"
+      Value: !GetAtt GetBracketByIdFunction.Arn
+    GetBracketByIdFunctionIamRole:
+      Description: "Implicit IAM Role created for Get Bracket By Id function"
+      Value: !GetAtt GetBracketByIdFunctionRole.Arn
+    GetBracketsForUserApi:
+      Description: "API Gateway endpoint URL for Prod stage for Get Brackets For User function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/api/user/{userId+}/brackets"
+    GetBracketsForUserFunction:
+      Description: "Get Brackets for User Lambda Function ARN"
+      Value: !GetAtt GetBracketsForUserFunction.Arn
+    GetBracketsForUserFunctionIamRole:
+      Description: "Implicit IAM Role created for Get Brackets for User function"
+      Value: !GetAtt GetBracketsForUserFunctionRole.Arn
+    GetCognitoUserByIdApi:
+      Description: "API Gateway endpoint URL for Prod stage for Get Cognito User by Id function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/api/user/list/"
+    GetCognitoUserByIdFunction:
+      Description: "Get Cognito User by Id Lambda Function ARN"
+      Value: !GetAtt GetCognitoUserByIdFunction.Arn
+    GetCognitoUserByIdFunctionIamRole:
+      Description: "Implicit IAM Role created for Get Cognito User by Id function"
+      Value: !GetAtt GetCognitoUserByIdFunctionRole.Arn
+    GetCognitoUsersApi:
+      Description: "API Gateway endpoint URL for Prod stage for Get Cognito Users function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/api/user/list/"
+    GetCognitoUsersFunction:
+      Description: "Get Cognito Users Lambda Function ARN"
+      Value: !GetAtt GetCognitoUsersFunction.Arn
+    GetCognitoUsersFunctionIamRole:
+      Description: "Implicit IAM Role created for Get Cognito Users function"
+      Value: !GetAtt GetCognitoUsersFunctionRole.Arn
